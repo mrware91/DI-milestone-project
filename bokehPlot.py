@@ -7,18 +7,39 @@ from bokeh.palettes import Category10
 import pandas as pd
 import Picklez
 
-# output_notebook()
+import quandl
+import os
 
-qdf = Picklez.load_obj('data/quandlData2017')
-qdf['date'] = qdf['date'].apply(lambda x: pd.to_datetime(x))
-qdf = qdf.set_index('date')
+# Grab tickers and plotable datatypes from quandl
+quandl.ApiConfig.api_key = os.environ['quandlAPIKey']
+tickers = quandl.get_table('WIKI/PRICES', date = { 'gte': '2017-01-01', 'lte': '2017-01-03' },
+                         paginate=True, qopts={'columns': ['ticker']})['ticker'].unique()
 
-def generate_bokeh_plot(qdf,tickers,data_types):
+sampleData = quandl.get('WIKI/AAPL', start_date="2001-12-31", end_date="2005-12-31")
+
+data_types = [key for key in sampleData.keys()]
+df_columns = list(data_types)
+df_columns.append('ticker')
+
+# Generate quandl data
+def generateQuandlData(pTickers, start_date="2001-12-31",end_date="2005-12-31"):
+    allData = pd.DataFrame(columns = df_columns)
+    for ticker in pTickers:
+        data = quandl.get('WIKI/%s' % (ticker), start_date=start_date, end_date=end_date)
+        data['ticker'] = ticker
+        allData = allData.append(data)
+
+    return allData
+
+def generate_bokeh_plot(pTickers,pDataTypes, start_date="2001-12-31",end_date="2005-12-31"):
+    uTickers = list(set(pTickers))
+    qdf = generateQuandlData(uTickers, start_date, end_date)
+
     p1 = figure(title="WIKI/PRICES", toolbar_location="right",background_fill_color="#E8DDCB", x_axis_type="datetime",
                 logo=None, tools="pan,wheel_zoom,box_zoom,reset,save")
 
-    for m, ticker in enumerate(tickers):
-        for n, data_type in enumerate(data_types):
+    for m, ticker in enumerate(uTickers):
+        for n, data_type in enumerate(pDataTypes):
             idxs=qdf['ticker']==ticker
             p1.line(qdf.index[idxs],  qdf[idxs][data_type],
                     color=Category10[10][n+(n+1)*m], line_width=2, alpha=0.7,

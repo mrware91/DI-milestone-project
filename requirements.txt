@@ -4,3 +4,4 @@ flask-cors==3.0.3
 flask==0.12.2
 bokeh==0.12.14
 pandas==0.20.3
+quandl==3.3.0
