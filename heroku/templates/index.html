@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Plot parameters</h2>
+    <form action="/">
+
+      <h3>Specify the number of plot tickers to plot</h3>
+      <select name="nplot">
+        {% for n in range(1,nPlotMax) %}
+        			<option value="{{ n }}" {% if n==nplot %}selected{%else%} {%endif%}>{{ n }}</option>
+        {% endfor %}
+      </select> <input type="submit" value="Update">
+      <p/>
+
+      <h3>Choose the ticker(s) to plot</h3>
+      {% for n in range(nplot) %}
+        <select name="ticker[{{ n }}]">
+          {% for ticker in tickers %}
+          			<option value="{{ ticker }}" {% if ticker==tickers2Plot[n] %}selected{%else%} {%endif%}>{{ ticker }}</option>
+          {% endfor %}
+        </select>
+      {% endfor %}
+      <p/>
+
+
+      <h3>Choose the value(s) to plot</h3>
+      {% for data_type in data_types %}
+        <input id="{{ data_type }}" type="checkbox" name="{{ data_type }}" value="True" {% if data_type in data2Plot %}checked{%else%} {%endif%}>{{ data_type }}</input>
+      {% endfor %}
+      <p/>
+
+      <h3></h3>
+      <input type="submit" value="Plot">
+    </form>
+    <form action="/">
+        <input type="submit" value="Reset" />
+    </form>
+    <p/>
+
+    <h2> Plot of WIKI/PRICES from Quandl </h2>
+      {{ script|safe }}
+      {{ div|safe }}
+
+{% endblock %}
