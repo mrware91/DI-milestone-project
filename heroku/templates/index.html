@@ -28,6 +28,10 @@
       {% endfor %}
       <p/>
 
+      <h3>Specify the date range to plot (YYYY-MM-DD){{ ' *Invalid range entered*' if bad_date }}</h3>
+      Start date:  <input type="text" name="start_date" value="{{ start_date }}">   End date:  <input type="text" name="end_date" value="{{ end_date }}">
+      <p/>
+
       <h3></h3>
       <input type="submit" value="Plot">
     </form>
@@ -36,7 +40,7 @@
     </form>
     <p/>
 
-    <h2> Plot of WIKI/PRICES from Quandl </h2>
+    <h2> Plot of QUANDL/WIKI/PRICES: {{ plot_start }} to {{ plot_end }} </h2>
       {{ script|safe }}
       {{ div|safe }}
 

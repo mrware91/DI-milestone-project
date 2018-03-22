@@ -1,17 +1,20 @@
 from bokehPlot import *
 from flask import Flask, render_template, request, redirect, flash
 from flask_cors import CORS
+import quandl
+import os
+from datetime import datetime
 
+plot_start=None
+plot_end=None
+
+# Define and start Flask server
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/')
 @app.route('/index')
 def index():
-    tickers = qdf['ticker'].unique()
-    data_types = [key for key in qdf.keys()]
-    data_types.pop( data_types.index('ticker') )
-
     # Determine the number of tickers to plot
     nplot = request.args.get("nplot")
     init_config = True
@@ -20,6 +23,32 @@ def index():
     else:
         nplot = int(nplot)
         init_config = False
+
+    # Determine start and end date
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+    bad_date = False
+
+    if start_date is None:
+        start_date='2017-01-01'
+    if end_date is None:
+        end_date = '2018-01-01'
+
+    try:
+        if datetime.strptime(end_date, '%Y-%m-%d')<datetime.strptime(start_date, '%Y-%m-%d'):
+            plot_start='2017-01-01'
+            plot_end  = '2018-01-01'
+            bad_date  = True
+        else:
+            plot_start = start_date
+            plot_end = end_date
+    except Exception:
+        plot_start='2017-01-01'
+        plot_end  = '2018-01-01'
+        bad_date  = True
+
+
+
 
     # Determine which tickers to plot
     tickers2Plot = []
@@ -44,11 +73,14 @@ def index():
                 data2Plot.append(dt)
 
     # Generate the plot
-    script, div = components(generate_bokeh_plot(qdf,tickers2Plot,data2Plot))
+    script, div = components(generate_bokeh_plot(tickers2Plot,data2Plot, plot_start, plot_end))
 
     return render_template("index.html", nPlotMax=5, nplot=nplot, tickers=tickers, data_types=data_types,
-                                        tickers2Plot=tickers2Plot, data2Plot=data2Plot, script=script, div=div)
+                                        tickers2Plot=tickers2Plot, data2Plot=data2Plot, script=script, div=div,
+                                        start_date=start_date, end_date=end_date,
+                                        plot_start=plot_start, plot_end=plot_end,
+                                        bad_date=bad_date)
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0')
+  app.run(port=33507)

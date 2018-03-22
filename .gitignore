@@ -1,4 +1,5 @@
 # My .gitignore
+.env
 quandl_api_key.pkl
 quandlAPI/quandleAPIKey.pkl
 heroku/.git
