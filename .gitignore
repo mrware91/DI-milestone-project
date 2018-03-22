@@ -1,5 +1,6 @@
 # My .gitignore
 quandl_api_key.pkl
+quandlAPI/quandleAPIKey.pkl
 heroku/.git
 data/quandlData.pkl
 

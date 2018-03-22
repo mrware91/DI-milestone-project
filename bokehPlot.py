@@ -4,7 +4,6 @@ from bokeh.embed import components
 from bokeh.io import output_notebook
 from bokeh.palettes import Category10
 
-import numpy as np
 import pandas as pd
 import Picklez
 

@@ -4,15 +4,12 @@ from bokeh.embed import components
 from bokeh.io import output_notebook
 from bokeh.palettes import Category10
 
-import numpy as np
 import pandas as pd
 import Picklez
 
 # output_notebook()
 
 qdf = Picklez.load_obj('data/quandlData2017')
-qdf['date'] = qdf['date'].apply(lambda x: pd.to_datetime(x))
-qdf = qdf.set_index('date')
 
 def generate_bokeh_plot(qdf,tickers,data_types):
     p1 = figure(title="WIKI/PRICES", toolbar_location="right",background_fill_color="#E8DDCB", x_axis_type="datetime",

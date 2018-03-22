@@ -1,12 +1,14 @@
 from bokehPlot import *
 from flask import Flask, render_template, request, redirect, flash
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 @app.route('/index')
 def index():
-    tickers = np.unique(qdf['ticker'])
+    tickers = qdf['ticker'].unique()
     data_types = [key for key in qdf.keys()]
     data_types.pop( data_types.index('ticker') )
 
@@ -49,4 +51,4 @@ def index():
 
 
 if __name__ == '__main__':
-  app.run(port=33507)
+  app.run(host='0.0.0.0')
